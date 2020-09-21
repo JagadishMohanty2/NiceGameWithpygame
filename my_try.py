@@ -187,24 +187,28 @@ def collide(obj1, obj2):
     return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) != None
 
 def main():
+    # for the game
     run = True
     FPS = 60
     level = 0
     lives = 5
     main_font = pygame.font.SysFont("comicsans", 50)
     lost_font = pygame.font.SysFont("comicsans", 60)
+    exit_font = pygame.font.SysFont("comicsans", 50)
 
+    # for enemy
     enemies = []
     wave_length = 5
     enemy_vel = 1
 
+    # for player
     player_vel = 5
     laser_vel = 5
-
     player = Player(300, 630)
 
     clock = pygame.time.Clock()
 
+    # for counting the total number of times lost
     lost = False
     lost_count = 0
 
@@ -218,9 +222,11 @@ def main():
         WIN.blit(lives_label, (10, 10))
         WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
 
+        # to show the enemies
         for enemy in enemies:
             enemy.draw(WIN)
 
+        # to draw th player
         player.draw(WIN)
 
         if lost:
@@ -243,59 +249,82 @@ def main():
             else:
                 continue
 
-        if len(enemies) == 0:
+        if len(enemies) == 0: # if all the enemies are killed then
             level += 1
             wave_length += 5
             for i in range(wave_length):
+                # pick a random spwan location and a random color
                 enemy = Enemy(random.randrange(50, WIDTH-100), random.randrange(-1500, -100), random.choice(["red", "blue", "green"]))
                 enemies.append(enemy)
 
+        # to check whether an user quit or not
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
 
+        # to get the key pressed
         keys = pygame.key.get_pressed()
+        
+        # a for going to the left until the border comes up
         if keys[pygame.K_a] and player.x - player_vel > 0: # left
             player.x -= player_vel
+
+        # d for going to the right until the border comes up
         if keys[pygame.K_d] and player.x + player_vel + player.get_width() < WIDTH: # right
             player.x += player_vel
+        
+        # w for going up until the border comes up
         if keys[pygame.K_w] and player.y - player_vel > 0: # up
             player.y -= player_vel
+        
+        # s for going down until the border comes up
         if keys[pygame.K_s] and player.y + player_vel + player.get_height() + 15 < HEIGHT: # down
             player.y += player_vel
+        
+        # SPACEBAR for for shooting
         if keys[pygame.K_SPACE]:
             player.shoot()
 
-        for enemy in enemies[:]:
-            enemy.move(enemy_vel)
-            enemy.move_lasers(laser_vel, player)
+        # f for exiting
+        if keys[pygame.K_f]:
+            exit(code=None)
 
-            if random.randrange(0, 2*60) == 1:
+        for enemy in enemies[:]:
+            enemy.move(enemy_vel) # the enemy should move down the screen
+            enemy.move_lasers(laser_vel, player) # the enemy should shoot laser down the screen
+
+            if random.randrange(0, 2*FPS) == 1: # need to have luck in order to shoot
                 enemy.shoot()
 
-            if collide(enemy, player):
+            if collide(enemy, player): # if player collides with enemy
                 player.health -= 10
                 enemies.remove(enemy)
-            elif enemy.y + enemy.get_height() > HEIGHT:
+
+            elif enemy.y + enemy.get_height() > HEIGHT: # if the enemy reaches the bottem then
                 lives -= 1
                 enemies.remove(enemy)
 
+        # laser moves upward for it goes in -Y axis
         player.move_lasers(-laser_vel, enemies)
 
 def main_menu():
     title_font = pygame.font.SysFont("comicsans", 70)
-    run = True
-    while run:
+
+    while True:
+    
         WIN.blit(BG, (0,0))
-        title_label = title_font.render("Press the mouse to begin...", 1, (255,255,255))
+        title_label = title_font.render("""Press the mouse to begin...""", 1, (255,255,255))
         WIN.blit(title_label, (WIDTH/2 - title_label.get_width()/2, 350))
         pygame.display.update()
+ 
         for event in pygame.event.get():
+            # if the user exits then
             if event.type == pygame.QUIT:
-                run = False
+                break
+
+            # check whether a mouse buttin is clicked
             if event.type == pygame.MOUSEBUTTONDOWN:
                 main()
+        
     pygame.quit()
-
-
 main_menu()
