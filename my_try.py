@@ -1,5 +1,13 @@
-import pygame
 import os
+
+try:
+    import pygame
+except Exception:
+    os.system('pip install pygame')
+
+else:
+    import pygame
+    
 import time
 import random
 pygame.font.init()
