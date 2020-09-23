@@ -27,3 +27,4 @@ Goal:
 Note:
 
 + You have to start from the beginning every time you start the game as your current level would not be saved
++ Extract all the files tp the same folder in order for the game to run
