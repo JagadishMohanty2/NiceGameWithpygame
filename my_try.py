@@ -146,7 +146,7 @@ class Player(Ship):
     def healthbar(self, window):
         # default health value is 100
         pygame.draw.rect(
-            # the border is black
+            # the box filed with red
             window, (255,0,0), 
             (
                 self.x, self.y + self.ship_img.get_height() + 10, 
@@ -155,7 +155,7 @@ class Player(Ship):
         )
 
         pygame.draw.rect(
-            # the box is filled with red color
+            # the box is filled with green color
             window, (0,255,0), 
             (
                self.x, self.y + self.ship_img.get_height() + 10, 
@@ -234,7 +234,7 @@ def main():
         for enemy in enemies:
             enemy.draw(WIN)
 
-        # to draw th player
+        # to draw the player
         player.draw(WIN)
 
         if lost:
